@@ -157,4 +157,19 @@ class StructuredTextTests: XCTestCase {
         waitForExpectations(timeout: 10.0, handler: nil)
     }
 
+    func testRenderingAttributedString() {
+
+        let structuredTextData = JSONDecodingTests.jsonData("structured-text")
+        let jsonDecoder = JSONDecoder.withoutLocalizationContext()
+        let localesJSONData = JSONDecodingTests.jsonData("all-locales")
+        let localesResponse = try! jsonDecoder.decode(ArrayResponse<Contentful.Locale>.self, from: localesJSONData)
+        jsonDecoder.update(with: LocalizationContext(locales: localesResponse.items)!)
+
+        jsonDecoder.userInfo[.linkResolverContextKey] = LinkResolver()
+
+        let document = try! jsonDecoder.decode(Document.self, from: structuredTextData)
+        expect(document.content.count).to(equal(17))
+
+    }
+
 }

@@ -29,7 +29,6 @@ public protocol EmbeddedResourceNode: Node {
 
 /// The data describing the linked entry or asset for an `EmbeddedResouceNode`
 public class EmbeddedResourceData: Decodable {
-    // TODO: Add initializers to make immutable.
     /// The raw link object which describes the target entry or asset.
     public let target: Link
 
@@ -98,9 +97,9 @@ public enum NodeType: String, Decodable {
         case .text:
             return Text.self
         case .h1:
-            return H1.self
+            return Heading.self
         case .h2:
-            return H2.self
+            return Heading.self
         case .embeddedEntryBlock:
             return EmbeddedEntryBlock.self
         case .document:
@@ -143,9 +142,10 @@ public struct Paragraph: BlockNode {
 }
 
 /// A heading for the document.
-public struct H1: BlockNode {
+public struct Heading: BlockNode {
     public let nodeType: NodeType
     public let nodeClass: NodeClass
+    public let level: UInt
     public let content: [Node]
 
     public init(from decoder: Decoder) throws {
@@ -153,20 +153,13 @@ public struct H1: BlockNode {
         nodeType = try container.decode(NodeType.self, forKey: .nodeType)
         nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
         content = try container.decodeContent(forKey: .content)
-    }
-}
-
-/// A sub-heading.
-public struct H2: BlockNode {
-    public let nodeType: NodeType
-    public let nodeClass: NodeClass
-    public let content: [Node]
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
-        nodeType = try container.decode(NodeType.self, forKey: .nodeType)
-        nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
-        content = try container.decodeContent(forKey: .content)
+        switch nodeType {
+        case .h1:
+            level = 1
+        case .h2:
+            level = 2
+        default: fatalError()
+        }
     }
 }
 
