@@ -87,15 +87,15 @@ class StructuredTextTests: XCTestCase {
     func testResolvingEntryDecodableLinksInStructuredText() {
         let expectation = self.expectation(description: "")
 
-        StructuredTextTests.client.fetchArray(of: STTest.self, matching: QueryOn<STTest>.limit(to: 1).skip(theFirst: 1)) { result in
+        StructuredTextTests.client.fetchArray(of: STTest.self, matching: QueryOn<STTest>.where(sys: .id, .equals("4BupPSmi4M02m0U48AQCSM"))) { result in
             switch result {
             case .success(let arrayResponse):
                 expect(arrayResponse.items.count).to(equal(1))
-                expect(arrayResponse.items.first!.body.content.count).to(equal(17))
+                expect(arrayResponse.items.first!.body.content.count).to(equal(25))
                 expect(arrayResponse.items.first!.body.content[2].nodeType).to(equal(NodeType.embeddedEntryBlock))
-                let headingNode = arrayResponse.items.first!.body.content.first as! H1
-                expect((headingNode.content.first as? InlineNode)?.value).to(equal("Some heading"))
-                let nodeWithEmbeddedEntry = arrayResponse.items.first!.body.content[2] as! EmbeddedEntryBlock
+                let headingNode = arrayResponse.items.first!.body.content.first as! Heading
+                expect((headingNode.content.first as? Text)?.value).to(equal("Some heading"))
+                let nodeWithEmbeddedEntry = arrayResponse.items.first!.body.content[2] as! EmbeddedResource
                 expect(nodeWithEmbeddedEntry.data.resolvedEntryDecodable).toNot(beNil())
                 expect((nodeWithEmbeddedEntry.data.resolvedEntryDecodable as? EmbeddedEntry)?.body).to(equal("Embedded 1"))
 
@@ -145,7 +145,7 @@ class StructuredTextTests: XCTestCase {
                 expect((arrayResponse.items.first!.fields["body"] as! Document).content.count).to(equal(17))
                 expect((arrayResponse.items.first!.fields["body"] as! Document).content[2].nodeType).to(equal(NodeType.embeddedEntryBlock))
 
-                let nodeWithEmbeddedEntry = (arrayResponse.items.first!.fields["body"] as! Document).content[2] as! EmbeddedEntryBlock
+                let nodeWithEmbeddedEntry = (arrayResponse.items.first!.fields["body"] as! Document).content[2] as! EmbeddedResource
                 expect(nodeWithEmbeddedEntry.data.target.entry).toNot(beNil())
                 expect(nodeWithEmbeddedEntry.data.target.entry?.fields["body"] as? String).to(equal("Embedded 1"))
 
@@ -169,7 +169,5 @@ class StructuredTextTests: XCTestCase {
 
         let document = try! jsonDecoder.decode(Document.self, from: structuredTextData)
         expect(document.content.count).to(equal(17))
-
     }
-
 }

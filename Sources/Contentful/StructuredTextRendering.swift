@@ -78,38 +78,38 @@ public struct StrikeThroughStyling {}
 public struct ListStyling {}
 public struct LinkStyling {}
 public struct InlineCodeStyling {}
-
-// Copied from MarkyMark
-public extension Font {
-
-    public func bolded() -> Font? {
-        if let descriptor = fontDescriptor.withSymbolicTraits(.traitBold) {
-            return Font(descriptor: descriptor, size: pointSize)
-        }
-
-        return nil
-    }
-
-    public func italicized() -> Font? {
-        if let descriptor = fontDescriptor.withSymbolicTraits(.traitItalic) {
-            return Font(descriptor: descriptor, size: pointSize)
-        }
-
-        return nil
-    }
-
-    public func italicizedAndBolded() -> Font? {
-        if let descriptor = fontDescriptor.withSymbolicTraits([.traitItalic, .traitBold]) {
-            return Font(descriptor: descriptor, size: pointSize)
-        }
-
-        return nil
-    }
-
-    public func resized(to size: CGFloat) -> Font {
-        return Font(descriptor: fontDescriptor.withSize(size), size: size)
-    }
-}
+//
+//// Copied from MarkyMark
+//public extension Font {
+//
+//    public func bolded() -> Font? {
+//        if let descriptor = fontDescriptor.withSymbolicTraits(.traitBold) {
+//            return Font(descriptor: descriptor, size: pointSize)
+//        }
+//
+//        return nil
+//    }
+//
+//    public func italicized() -> Font? {
+//        if let descriptor = fontDescriptor.withSymbolicTraits(.traitItalic) {
+//            return Font(descriptor: descriptor, size: pointSize)
+//        }
+//
+//        return nil
+//    }
+//
+//    public func italicizedAndBolded() -> Font? {
+//        if let descriptor = fontDescriptor.withSymbolicTraits([.traitItalic, .traitBold]) {
+//            return Font(descriptor: descriptor, size: pointSize)
+//        }
+//
+//        return nil
+//    }
+//
+//    public func resized(to size: CGFloat) -> Font {
+//        return Font(descriptor: fontDescriptor.withSize(size), size: size)
+//    }
+//}
 
 
 //protocol NodeViewConfigurable {
@@ -127,32 +127,43 @@ public extension Font {
 public struct MarkedTextRenderer {
 
     public static func attributedString(for block: BlockNode) -> NSAttributedString {
+
         let mutableString = NSMutableAttributedString()
 
         for node in block.content {
             // Break if we've finished rendering all inline or text nodes.
-            guard node.nodeClass == .text || node.nodeClass == .inline else { break }
+            switch node.nodeClass {
+            case .text:
+                let text = node as! Text
+//                let markAttributes: [NSAttributedStringKey: Any] = [.font: MarkedTextRenderer.font(for: text, styling: Styling())!]
+//                let attributedString = NSAttributedString(string: text.value, attributes: markAttributes)
+//                mutableString.append(attributedString)
 
-            if let node = node as? Text {
-                let markAttributes: [NSAttributedStringKey: Any] = [.font: MarkedTextRenderer.font(for: node, styling: Styling())!]
-                let attributedString = NSAttributedString(string: node.value, attributes: markAttributes)
-                mutableString.append(attributedString)
+            case .inline:
+                // Get embeded entry.
+                break
+
+            case .document:
+                fatalError()
+
+            case .block:
+                break
             }
         }
         return mutableString
     }
-
-    public static func font(for textNode: Text, styling: Styling) -> Font? {
-        let markTypes = textNode.marks.map { $0.type }
-        if markTypes.contains(.bold) && markTypes.contains(.italic) {
-            return styling.baseFont.italicizedAndBolded()
-        } else if markTypes.contains(.bold) {
-            return styling.baseFont.bolded()
-        } else if markTypes.contains(.italic) {
-            return styling.baseFont.italicized()
-        } else if markTypes.contains(.code) {
-            // TODO: Use monospaced font?
-        }
-        return nil
-    }
+//
+//    public static func font(for textNode: Text, styling: Styling) -> Font? {
+//        let markTypes = textNode.marks.map { $0.type }
+//        if markTypes.contains(.bold) && markTypes.contains(.italic) {
+//            return styling.baseFont.italicizedAndBolded()
+//        } else if markTypes.contains(.bold) {
+//            return styling.baseFont.bolded()
+//        } else if markTypes.contains(.italic) {
+//            return styling.baseFont.italicized()
+//        } else if markTypes.contains(.code) {
+//            // TODO: Use monospaced font?
+//        }
+//        return nil
+//    }
 }

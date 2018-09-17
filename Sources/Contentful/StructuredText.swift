@@ -16,21 +16,12 @@ public protocol Node: Decodable {
     var nodeClass: NodeClass { get }
 }
 
-/// A node which contains an array of child nodes.
-public protocol BlockNode: Node {
-    /// An array of child nodes.
-    var content: [Node] { get }
-}
-
-/// A node which contains a linked entry or asset.
-public protocol EmbeddedResourceNode: Node {
-    var data: EmbeddedResourceData { get }
-}
-
 /// The data describing the linked entry or asset for an `EmbeddedResouceNode`
 public class EmbeddedResourceData: Decodable {
     /// The raw link object which describes the target entry or asset.
     public let target: Link
+
+    public let title: String?
 
     /// When using the SDK in conjunction with your own `EntryDecodable` classes, this property will
     /// be to the resolved `EntryDecodable` instance.
@@ -39,24 +30,17 @@ public class EmbeddedResourceData: Decodable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: JSONCodingKeys.self)
         target = try container.decode(Link.self, forKey: JSONCodingKeys(stringValue: "target")!)
-
+        title = try container.decodeIfPresent(String.self, forKey: JSONCodingKeys(stringValue: "title")!)
         try container.resolveLink(forKey: JSONCodingKeys(stringValue: "target")!, decoder: decoder) { [weak self] decodable in
             // Workaroudn for bug in the Swift compiler: https://bugs.swift.org/browse/SR-3871
             self?.resolvedEntryDecodable = decodable as? EntryDecodable
         }
     }
-    internal init(resolvedTarget: Link) {
+    internal init(resolvedTarget: Link, title: String? = nil) {
         target = resolvedTarget
         resolvedEntryDecodable = nil
+        self.title = title
     }
-}
-
-/// A node modifying the current node with marks.
-public protocol InlineNode: Node {
-    /// The textual value for this inline node.
-    var value: String { get }
-    /// The marks that describe the markup for this inline node.
-    var marks: [Text.Mark] { get}
 }
 
 internal enum NodeContentCodingKeys: String, CodingKey {
@@ -89,6 +73,22 @@ public enum NodeType: String, Decodable {
     case h1 = "heading-1"
     /// A sub-heading.
     case h2 = "heading-2"
+    case h3 = "heading-3"
+    case h4 = "heading-4"
+    case h5 = "heading-5"
+    case h6 = "heading-6"
+
+    case quote
+    case horizontalRule = "hr"
+    case orderedList = "ordered-list"
+    case unorderedList = "unordered-list"
+    case listItem = "list-item"
+    case hyperlink 
+    case embeddedAssetBlock
+    case embeddedEntryInline = "embedded-entry-inline"
+    case assetHyperlink = "asset-hyperlink"
+    case entryHyperlink = "entry-hyperlink"
+
 
     internal var type: Node.Type {
         switch self {
@@ -96,97 +96,135 @@ public enum NodeType: String, Decodable {
             return Paragraph.self
         case .text:
             return Text.self
-        case .h1:
+        case .h1, .h2, .h3, .h4, .h5, .h6:
             return Heading.self
-        case .h2:
-            return Heading.self
-        case .embeddedEntryBlock:
-            return EmbeddedEntryBlock.self
         case .document:
             return Document.self
+        case .quote:
+            return Quote.self
+        case .horizontalRule:
+            return HorizontalRule.self
+        case .orderedList:
+            return OrderedList.self
+        case .unorderedList:
+            return UnorderedList.self
+        case .listItem:
+            return ListItem.self
+        case .hyperlink:
+            return Hyperlink.self
+        case .embeddedAssetBlock, .embeddedEntryBlock, .embeddedEntryInline, .assetHyperlink, .entryHyperlink:
+            return EmbeddedResource.self
         }
     }
 }
 
-/// The top level node which contains all other nodes.
-public struct Document: BlockNode, Decodable {
+public class BlockNode: Node {
     public let nodeType: NodeType
     public let nodeClass: NodeClass
-    public let content: [Node]
+    public internal(set) var content: [Node]
 
-    public init(from decoder: Decoder) throws {
+    required public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
         nodeType = try container.decode(NodeType.self, forKey: .nodeType)
         nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
         content = try container.decodeContent(forKey: .content)
     }
+}
+
+/// The top level node which contains all other nodes.
+public class Document: Node {
+    public let nodeType: NodeType
+    public let nodeClass: NodeClass
+    public internal(set) var content: [Node]
+
     internal init(content: [Node]) {
         self.content = content
-        nodeType = .document
-        nodeClass = .document
+        self.nodeType = .document
+        self.nodeClass = .document
+    }
+
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
+        nodeType = try container.decode(NodeType.self, forKey: .nodeType)
+        nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
+        content = try container.decodeContent(forKey: .content)
     }
 }
 
 /// A block of text, containing child `Text` nodes.
-public struct Paragraph: BlockNode {
-    public let nodeType: NodeType
-    public let nodeClass: NodeClass
-    public let content: [Node]
+public final class Paragraph: BlockNode {
+    public required init(from decoder: Decoder) throws {
+        do {
+            try super.init(from: decoder)
+        } catch {
+            throw(error)
+        }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
-        nodeType = try container.decode(NodeType.self, forKey: .nodeType)
-        nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
-        content = try container.decodeContent(forKey: .content)
     }
 }
 
-/// A heading for the document.
-public struct Heading: BlockNode {
+// Strongly typed block nodes.
+public final class UnorderedList: BlockNode {}
+
+public final class OrderedList: BlockNode {}
+
+public final class Quote: BlockNode {}
+// Weakly typed block nodes.
+public final class ListItem: BlockNode {}
+
+public struct HorizontalRule: Node {
     public let nodeType: NodeType
     public let nodeClass: NodeClass
-    public let level: UInt
-    public let content: [Node]
+}
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
-        nodeType = try container.decode(NodeType.self, forKey: .nodeType)
-        nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
-        content = try container.decodeContent(forKey: .content)
+/// A heading for the document.
+public final class Heading: BlockNode {
+    public var level: UInt!
+
+    required public init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
         switch nodeType {
-        case .h1:
-            level = 1
-        case .h2:
-            level = 2
+        case .h1: level = 1
+        case .h2: level = 2
+        case .h3: level = 3
+        case .h4: level = 4
+        case .h5: level = 5
+        case .h6: level = 6
         default: fatalError()
         }
     }
 }
 
+public struct Hyperlink: Node {
+    public let nodeType: NodeType
+    public let nodeClass: NodeClass
+    public let data: Hyperlink.Data
+
+    public struct Data: Codable {
+        public let url: String
+        public let title: String
+    }
+}
+
 /// A block containing data for a linked entry.
-public class EmbeddedEntryBlock: EmbeddedResourceNode {
+public class EmbeddedResource: Node {
     public let nodeType: NodeType
     public let nodeClass: NodeClass
     public let data: EmbeddedResourceData
 
-    public required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
-        nodeType = try container.decode(NodeType.self, forKey: .nodeType)
-        nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
-        data = try container.decode(EmbeddedResourceData.self, forKey: .data)
-    }
-
-    internal init(resolvedData: EmbeddedResourceData) {
+    internal init(resolvedData: EmbeddedResourceData, nodeType: NodeType) {
         nodeClass = .block
-        nodeType = .embeddedEntryBlock
+        self.nodeType = nodeType
         data = resolvedData
     }
 }
 
+
 /// A node containing text with marks.
-public struct Text: InlineNode {
+public struct Text: Node {
     public let nodeType: NodeType
     public let nodeClass: NodeClass
+
     /// The string value of the text.
     public let value: String
     /// An array of the markup styles which should be applied to the text.
