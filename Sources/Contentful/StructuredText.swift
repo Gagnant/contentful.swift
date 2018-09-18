@@ -83,7 +83,7 @@ public enum NodeType: String, Decodable {
     case orderedList = "ordered-list"
     case unorderedList = "unordered-list"
     case listItem = "list-item"
-    case hyperlink 
+    case hyperlink
     case embeddedAssetBlock
     case embeddedEntryInline = "embedded-entry-inline"
     case assetHyperlink = "asset-hyperlink"
@@ -152,16 +152,7 @@ public class Document: Node {
 }
 
 /// A block of text, containing child `Text` nodes.
-public final class Paragraph: BlockNode {
-    public required init(from decoder: Decoder) throws {
-        do {
-            try super.init(from: decoder)
-        } catch {
-            throw(error)
-        }
-
-    }
-}
+public final class Paragraph: BlockNode {}
 
 // Strongly typed block nodes.
 public final class UnorderedList: BlockNode {}
@@ -195,14 +186,18 @@ public final class Heading: BlockNode {
     }
 }
 
-public struct Hyperlink: Node {
-    public let nodeType: NodeType
-    public let nodeClass: NodeClass
+public class Hyperlink: BlockNode {
+
     public let data: Hyperlink.Data
 
     public struct Data: Codable {
-        public let url: String
-        public let title: String
+        public let uri: String
+        public let title: String?
+    }
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
+        data = try container.decode(Data.self, forKey: .data)
+        try super.init(from: decoder)
     }
 }
 

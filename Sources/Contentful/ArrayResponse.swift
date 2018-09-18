@@ -272,8 +272,6 @@ internal extension Swift.Array where Element == Dictionary<String, Any> {
 
     func nodeType(at index: Int) -> NodeType? {
         guard let nodeTypeString = self[index]["nodeType"] as? String, let nodeType = NodeType(rawValue: nodeTypeString) else {
-
-            print("STOP")
             return nil
         }
         return nodeType
