@@ -176,6 +176,9 @@
 		ED737C951EF1785A00ECB3F1 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737C931EF1785A00ECB3F1 /* Persistence.swift */; };
 		ED737C961EF1785A00ECB3F1 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737C931EF1785A00ECB3F1 /* Persistence.swift */; };
 		ED737C971EF1785A00ECB3F1 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737C931EF1785A00ECB3F1 /* Persistence.swift */; };
+		ED77F72121515A43004E9FF8 /* StructuredTextRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED77F72021515A43004E9FF8 /* StructuredTextRenderingTests.swift */; };
+		ED77F72221515A43004E9FF8 /* StructuredTextRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED77F72021515A43004E9FF8 /* StructuredTextRenderingTests.swift */; };
+		ED77F72321515A43004E9FF8 /* StructuredTextRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED77F72021515A43004E9FF8 /* StructuredTextRenderingTests.swift */; };
 		ED882E9320484BF100D372BF /* EnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED882E9220484BF100D372BF /* EnvironmentTests.swift */; };
 		ED882E9420484BF100D372BF /* EnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED882E9220484BF100D372BF /* EnvironmentTests.swift */; };
 		ED882E9520484BF100D372BF /* EnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED882E9220484BF100D372BF /* EnvironmentTests.swift */; };
@@ -328,6 +331,7 @@
 		ED65CF951E3F6BF8000EBC62 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
 		ED68BD711E6DC47A00939F6D /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Query.swift; sourceTree = "<group>"; };
 		ED737C931EF1785A00ECB3F1 /* Persistence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		ED77F72021515A43004E9FF8 /* StructuredTextRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredTextRenderingTests.swift; sourceTree = "<group>"; };
 		ED7862731F7D2F9400CB2625 /* Interstellar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Interstellar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED7862751F7D2FAC00CB2625 /* Interstellar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Interstellar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED7862771F7D2FB300CB2625 /* Interstellar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Interstellar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -514,25 +518,26 @@
 		ED07C0161F3DD0DC004449FC /* ContentfulTests */ = {
 			isa = PBXGroup;
 			children = (
-				A19CA3D51B836EDD00A0EFCD /* Info.plist */,
-				ED02DC9E20E12405005EC57B /* Fixtures */,
-				ED9102671E65AE880076FDBD /* DVRRecordings */,
 				A19C74421C47A812005334AD /* AssetTests.swift */,
-				ED4A6E502132FEC100690EA4 /* StructuredTextTests.swift */,
 				ED88B7D91EF7CD3800538D1F /* ClientConfigurationTests.swift */,
 				A19CA3D31B836EDD00A0EFCD /* ContentfulTests.swift */,
 				A19C743E1C47A7F5005334AD /* ContentTypeTests.swift */,
-				ED5F8F951F94B8C300C86411 /* EntryTests.swift */,
+				ED9102671E65AE880076FDBD /* DVRRecordings */,
 				ED2E03E61F97608A006422A6 /* EntryDecodableLinkResolutionTests.swift */,
+				ED5F8F951F94B8C300C86411 /* EntryTests.swift */,
 				ED882E9220484BF100D372BF /* EnvironmentTests.swift */,
 				EDA7D96C1F8E6D660020EE86 /* ErrorTests.swift */,
+				ED02DC9E20E12405005EC57B /* Fixtures */,
 				ED1638C41ED5CA6D009BAA9F /* ImageTests.swift */,
+				A19CA3D51B836EDD00A0EFCD /* Info.plist */,
 				EDE087DF207CE2B200CB1287 /* ISO801DateTests.swift */,
 				A1B2E3661BBAD06000814D63 /* JSONDecodingTests.swift */,
 				ED307F211EE6E5D700633390 /* LocalizationTests.swift */,
 				5D001E5F200423C700AC5A4C /* PersistenceIntegrationTests.swift */,
 				ED02BC5F1E7047AE00BAB2CA /* QueryTests.swift */,
 				ED52DB3F1EE94C8E00225140 /* RateLimitTests.swift */,
+				ED4A6E502132FEC100690EA4 /* StructuredTextTests.swift */,
+				ED77F72021515A43004E9FF8 /* StructuredTextRenderingTests.swift */,
 				A114BBC11C50E9E200DE6679 /* SyncTests.swift */,
 				A17D044C1C4F974F002E568B /* UtilityTests.swift */,
 			);
@@ -1078,6 +1083,7 @@
 				EDE087E3207CE2E000CB1287 /* ISO801DateTests.swift in Sources */,
 				EDA7D96D1F8E6D660020EE86 /* ErrorTests.swift in Sources */,
 				A19C74431C47A812005334AD /* AssetTests.swift in Sources */,
+				ED77F72121515A43004E9FF8 /* StructuredTextRenderingTests.swift in Sources */,
 				A19CA3D41B836EDD00A0EFCD /* ContentfulTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1103,6 +1109,7 @@
 				EDE087E2207CE2E000CB1287 /* ISO801DateTests.swift in Sources */,
 				EDA7D96E1F8E6D660020EE86 /* ErrorTests.swift in Sources */,
 				EDA690991F43187B00581FC6 /* QueryTests.swift in Sources */,
+				ED77F72221515A43004E9FF8 /* StructuredTextRenderingTests.swift in Sources */,
 				EDA690931F43187B00581FC6 /* ContentfulTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1128,6 +1135,7 @@
 				EDE087E1207CE2E000CB1287 /* ISO801DateTests.swift in Sources */,
 				EDA7D96F1F8E6D660020EE86 /* ErrorTests.swift in Sources */,
 				EDA690A51F43187C00581FC6 /* QueryTests.swift in Sources */,
+				ED77F72321515A43004E9FF8 /* StructuredTextRenderingTests.swift in Sources */,
 				EDA6909F1F43187C00581FC6 /* ContentfulTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1394,6 +1402,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/Info_iOS.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.contentful.Contentful;
@@ -1420,6 +1429,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/Info_iOS.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.contentful.Contentful;
@@ -1850,6 +1860,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/Info_iOS.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.contentful.Contentful;

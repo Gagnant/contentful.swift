@@ -86,7 +86,7 @@ public class Entry: LocalizableResource {
                         if let blockNode = node as? EmbeddedResource {
                             let resolvedTarget = blockNode.data.target.resolve(against: includedEntries, and: includedAssets)
                             let newData = EmbeddedResourceData(resolvedTarget: resolvedTarget)
-                            let newBlockNode = EmbeddedResource(resolvedData: newData, nodeType: blockNode.nodeType)
+                            let newBlockNode = EmbeddedResource(resolvedData: newData, nodeType: blockNode.nodeType, content: blockNode.content)
                             return newBlockNode
                         }
                         return node

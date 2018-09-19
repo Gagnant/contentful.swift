@@ -129,6 +129,11 @@ public class BlockNode: Node {
         nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
         content = try container.decodeContent(forKey: .content)
     }
+    init(nodeType: NodeType, nodeClass: NodeClass, content: [Node]) {
+        self.nodeType = nodeType
+        self.nodeClass = nodeClass
+        self.content = content
+    }
 }
 
 /// The top level node which contains all other nodes.
@@ -160,6 +165,7 @@ public final class UnorderedList: BlockNode {}
 public final class OrderedList: BlockNode {}
 
 public final class Quote: BlockNode {}
+
 // Weakly typed block nodes.
 public final class ListItem: BlockNode {}
 
@@ -186,6 +192,7 @@ public final class Heading: BlockNode {
     }
 }
 
+// TODO: Make an inline representation
 public class Hyperlink: BlockNode {
 
     public let data: Hyperlink.Data
@@ -203,14 +210,26 @@ public class Hyperlink: BlockNode {
 
 /// A block containing data for a linked entry.
 public class EmbeddedResource: Node {
+
     public let nodeType: NodeType
     public let nodeClass: NodeClass
+    public internal(set) var content: [Node]
+
     public let data: EmbeddedResourceData
 
-    internal init(resolvedData: EmbeddedResourceData, nodeType: NodeType) {
-        nodeClass = .block
+    internal init(resolvedData: EmbeddedResourceData, nodeType: NodeType, content: [Node]) {
+        self.data = resolvedData
         self.nodeType = nodeType
-        data = resolvedData
+        self.nodeClass = .block
+        self.content = content
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: NodeContentCodingKeys.self)
+        nodeType = try container.decode(NodeType.self, forKey: .nodeType)
+        nodeClass = try container.decode(NodeClass.self, forKey: .nodeClass)
+        data = try container.decode(EmbeddedResourceData.self, forKey: .data)
+        content = try container.decodeContent(forKey: .content)
     }
 }
 
